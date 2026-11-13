@@ -3,19 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdLift - Digital Leaflet Showcase</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Featured Offers & Leaflets</title>
     <style>
-        :root {
-            --bg-dark: #050811;
-            --card-bg: #0c1326;
-            --primary-blue: #007bff;
-            --neon-blue: #00d2ff;
-            --text-light: #f0f4f8;
-            --text-muted: #94a3b8;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -24,113 +13,136 @@
         }
 
         body {
-            background: radial-gradient(circle at top, #0f1c3f 0%, var(--bg-dark) 80%);
-            color: var(--text-light);
+            background: radial-gradient(circle at top, #0a192f 0%, #020617 100%);
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 15px;
             overflow-x: hidden;
+            padding: 15px;
         }
 
-        #viewerSection {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* Header / Admin Link */
+        .top-bar {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            z-index: 100;
         }
 
-        .company-header {
-            text-align: center;
-            margin-bottom: 12px;
-            width: 100%;
+        .admin-btn {
+            background: rgba(14, 165, 233, 0.15);
+            color: #38bdf8;
+            border: 1px solid #0284c7;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.3s;
         }
 
-        .company-name {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .admin-btn:hover {
+            background: #0284c7;
             color: #fff;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
         }
 
-        .slide-counter {
-            font-size: 0.85rem;
-            color: var(--neon-blue);
-            margin-top: 4px;
+        /* Main Leaflet Showcase Container */
+        .showcase-wrapper {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(2, 132, 199, 0.25);
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(10px);
         }
 
+        /* Company Name */
+        .company-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Slider Area */
         .slider-container {
             position: relative;
             width: 100%;
-            background: var(--card-bg);
-            border: 1px solid rgba(0, 210, 255, 0.3);
-            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 123, 255, 0.2);
-            touch-action: pan-y;
+            border-radius: 12px;
+            background: #020617;
+            border: 1px solid #1e293b;
         }
 
         .slides-track {
             display: flex;
-            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
             width: 100%;
         }
 
         .slide {
             min-width: 100%;
             display: flex;
-            justify-content: center;
             align-items: center;
-            background: #000;
+            justify-content: center;
         }
 
         .slide img {
             width: 100%;
-            max-height: 62vh;
+            max-height: 65vh;
             object-fit: contain;
             display: block;
+            border-radius: 10px;
         }
 
+        /* Navigation Arrows */
         .nav-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(5, 8, 17, 0.75);
-            color: var(--neon-blue);
-            border: 1px solid rgba(0, 210, 255, 0.4);
-            width: 38px;
-            height: 38px;
+            background: rgba(2, 6, 23, 0.75);
+            color: #38bdf8;
+            border: 1px solid #0284c7;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            transition: 0.3s;
             z-index: 10;
-            transition: 0.2s;
         }
 
         .nav-arrow:hover {
-            background: var(--primary-blue);
-            color: #fff;
+            background: #0284c7;
+            color: #ffffff;
         }
 
         .prev-btn { left: 10px; }
         .next-btn { right: 10px; }
 
+        /* Dots Indicator */
         .dots-container {
             display: flex;
             justify-content: center;
             gap: 8px;
-            margin: 14px 0;
+            margin-top: 12px;
         }
 
         .dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: #334155;
             cursor: pointer;
@@ -138,188 +150,176 @@
         }
 
         .dot.active {
-            background: var(--neon-blue);
-            width: 22px;
-            border-radius: 4px;
+            background: #38bdf8;
+            width: 24px;
+            border-radius: 5px;
         }
 
+        /* WhatsApp Button */
         .whatsapp-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: #fff;
-            text-decoration: none;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 10px;
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+            width: 100%;
+            margin-top: 18px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .whatsapp-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+            box-shadow: 0 12px 25px rgba(37, 211, 102, 0.5);
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
+        .whatsapp-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
         }
     </style>
 </head>
 <body>
 
-    <main id="viewerSection">
-        <div class="company-header">
-            <div class="company-name" id="displayCompanyName">Loading Leaflets...</div>
-            <div class="slide-counter" id="slideCounter">0 / 0</div>
+    <div class="top-bar">
+        <a href="admin.html" class="admin-btn">Admin Login</a>
+    </div>
+
+    <div class="showcase-wrapper">
+        <!-- Company Name -->
+        <div class="company-title" id="companyName">Loading...</div>
+
+        <!-- Leaflet Slider -->
+        <div class="slider-container">
+            <button class="nav-arrow prev-btn" onclick="moveSlide(-1)">&#10094;</button>
+            <div class="slides-track" id="slidesTrack">
+                <!-- Slides will be injected here -->
+            </div>
+            <button class="nav-arrow next-btn" onclick="moveSlide(1)">&#10095;</button>
         </div>
 
-        <div class="slider-container" id="sliderContainer">
-            <button class="nav-arrow prev-btn" onclick="prevSlide()"><i class="fas fa-chevron-left"></i></button>
-            <div class="slides-track" id="slidesTrack"></div>
-            <button class="nav-arrow next-btn" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>
-        </div>
-
+        <!-- Pagination Dots -->
         <div class="dots-container" id="dotsContainer"></div>
 
-        <a href="https://wa.me/8801407193581?text=Hello!%20I%20scanned%20your%20QR%20code." 
-           target="_blank" 
-           class="whatsapp-btn" 
-           id="whatsappLink">
-            <i class="fab fa-whatsapp"></i> Chat on WhatsApp (+8801407193581)
+        <!-- WhatsApp Button -->
+        <a id="whatsappLink" href="https://wa.me/8801407193581" target="_blank" class="whatsapp-btn">
+            <svg class="whatsapp-icon" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+            </svg>
+            Order / Message on WhatsApp
         </a>
-    </main>
+    </div>
 
     <script>
-        const GITHUB_USER = "sahadhrubo63-a11y";
-        const GITHUB_REPO = "AdLift"; // মেইন পোর্টালের রিপোজিটরি নাম
-        const DATA_FILE = "leaflets.json";
         const WHATSAPP_NUMBER = "8801407193581";
-
-        let leaflets = [];
         let currentIndex = 0;
+        let leaflets = [];
 
-        window.onload = async function () {
-            await fetchGlobalLeaflets();
-            setupTouchSwipe();
-        };
-
-        async function fetchGlobalLeaflets() {
-            try {
-                const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${DATA_FILE}?t=${Date.now()}`;
-                const res = await fetch(rawUrl);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (Array.isArray(data)) {
-                        leaflets = data;
-                        renderSlider();
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.log("Error fetching data");
+        // Default demo data if admin hasn't added anything yet
+        const defaultLeaflets = [
+            {
+                company: "AdLift Promo Store",
+                image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                company: "Special Mega Offer",
+                image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80"
             }
+        ];
 
-            leaflets = [];
-            renderSlider();
-        }
-
-        function renderSlider() {
-            const track = document.getElementById("slidesTrack");
-            const dotsContainer = document.getElementById("dotsContainer");
-            const companyTitle = document.getElementById("displayCompanyName");
-            const counter = document.getElementById("slideCounter");
-
-            track.innerHTML = "";
-            dotsContainer.innerHTML = "";
+        function loadLeaflets() {
+            const savedData = localStorage.getItem('adLeaflets');
+            leaflets = savedData ? JSON.parse(savedData) : defaultLeaflets;
 
             if (leaflets.length === 0) {
-                track.innerHTML = `<div class="slide"><div class="empty-state">No leaflets published yet.</div></div>`;
-                companyTitle.innerText = "AdLift Offer";
-                counter.innerText = "0 / 0";
-                return;
+                leaflets = defaultLeaflets;
             }
 
-            if (currentIndex >= leaflets.length) currentIndex = 0;
-            if (currentIndex < 0) currentIndex = leaflets.length - 1;
+            const track = document.getElementById('slidesTrack');
+            const dotsContainer = document.getElementById('dotsContainer');
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
 
             leaflets.forEach((item, index) => {
-                const slideDiv = document.createElement("div");
-                slideDiv.className = "slide";
-                slideDiv.innerHTML = `<img src="${item.image}" alt="${item.company}">`;
-                track.appendChild(slideDiv);
+                // Create Slide
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.innerHTML = `<img src="${item.image}" alt="${item.company}" onerror="this.src='https://via.placeholder.com/600x800/0f172a/38bdf8?text=Image+Link+Error'">`;
+                track.appendChild(slide);
 
-                const dot = document.createElement("div");
-                dot.className = `dot ${index === currentIndex ? "active" : ""}`;
+                // Create Dot
+                const dot = document.createElement('div');
+                dot.className = index === 0 ? 'dot active' : 'dot';
                 dot.onclick = () => goToSlide(index);
                 dotsContainer.appendChild(dot);
             });
 
-            updateSliderPosition();
+            updateDisplay();
         }
 
-        function updateSliderPosition() {
-            const track = document.getElementById("slidesTrack");
-            const companyTitle = document.getElementById("displayCompanyName");
-            const counter = document.getElementById("slideCounter");
-            const dots = document.querySelectorAll(".dot");
+        function updateDisplay() {
+            const track = document.getElementById('slidesTrack');
+            const companyTitle = document.getElementById('companyName');
+            const whatsappLink = document.getElementById('whatsappLink');
+            const dots = document.querySelectorAll('.dot');
 
+            // Sliding animation (Left to Right / Right to Left)
             track.style.transform = `translateX(-${currentIndex * 100}%)`;
-            
-            const currentItem = leaflets[currentIndex];
-            companyTitle.innerText = currentItem.company;
-            counter.innerText = `${currentIndex + 1} / ${leaflets.length}`;
 
-            const msg = encodeURIComponent(`Hello! I scanned the QR code for "${currentItem.company}" and want to order/know more.`);
-            document.getElementById("whatsappLink").href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+            // Update Company Name
+            const currentCompany = leaflets[currentIndex].company;
+            companyTitle.textContent = currentCompany;
 
+            // Update WhatsApp pre-filled message with company name
+            const message = encodeURIComponent(`Hello! I saw the leaflet for "${currentCompany}" and want to know more.`);
+            whatsappLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+
+            // Update Dots
             dots.forEach((dot, idx) => {
-                dot.classList.toggle("active", idx === currentIndex);
+                dot.classList.toggle('active', idx === currentIndex);
             });
         }
 
-        function nextSlide() {
-            if (leaflets.length <= 1) return;
-            currentIndex = (currentIndex + 1) % leaflets.length;
-            updateSliderPosition();
-        }
-
-        function prevSlide() {
-            if (leaflets.length <= 1) return;
-            currentIndex = (currentIndex - 1 + leaflets.length) % leaflets.length;
-            updateSliderPosition();
+        function moveSlide(direction) {
+            currentIndex += direction;
+            if (currentIndex >= leaflets.length) {
+                currentIndex = 0;
+            } else if (currentIndex < 0) {
+                currentIndex = leaflets.length - 1;
+            }
+            updateDisplay();
         }
 
         function goToSlide(index) {
             currentIndex = index;
-            updateSliderPosition();
+            updateDisplay();
         }
 
-        function setupTouchSwipe() {
-            const slider = document.getElementById("sliderContainer");
-            let startX = 0;
-            let endX = 0;
+        // Keyboard Arrow Support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') moveSlide(1);
+            if (e.key === 'ArrowLeft') moveSlide(-1);
+        });
 
-            slider.addEventListener("touchstart", (e) => {
-                startX = e.touches[0].clientX;
-            }, { passive: true });
+        // Touch Swipe Support for Mobile
+        let touchStartX = 0;
+        const slider = document.querySelector('.slider-container');
+        slider.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+        slider.addEventListener('touchend', e => {
+            let touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 40) moveSlide(1);  // Swipe Left -> Next
+            if (touchEndX - touchStartX > 40) moveSlide(-1); // Swipe Right -> Previous
+        });
 
-            slider.addEventListener("touchend", (e) => {
-                endX = e.changedTouches[0].clientX;
-                const diff = startX - endX;
-                if (Math.abs(diff) > 40) {
-                    if (diff > 0) nextSlide();
-                    else prevSlide();
-                }
-            }, { passive: true });
-        }
+        // Initialize
+        loadLeaflets();
     </script>
 </body>
 </html>
