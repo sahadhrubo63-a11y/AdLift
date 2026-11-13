@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 // পুরো মূল প্রজেক্ট ফোল্ডারটি স্ট্যাটিক হিসেবে সেট করা হলো
-app.use(express.static(path.join(__dirname)));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // হোমপেজ রাউট
 app.get('/', (req, res) => {
