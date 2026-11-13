@@ -3,21 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdLift - Admin Portal</title>
-    <!-- QR Code Generator Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Admin Portal - Leaflet Manager</title>
     <style>
-        :root {
-            --bg-dark: #050811;
-            --card-bg: #0c1326;
-            --primary-blue: #007bff;
-            --neon-blue: #00d2ff;
-            --text-light: #f0f4f8;
-            --text-muted: #94a3b8;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -26,407 +13,302 @@
         }
 
         body {
-            background: radial-gradient(circle at top, #0f1c3f 0%, var(--bg-dark) 80%);
-            color: var(--text-light);
+            background: radial-gradient(circle at top, #0a192f 0%, #020617 100%);
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 30px 15px;
         }
 
-        .container {
+        .card {
             width: 100%;
             max-width: 550px;
-        }
-
-        .admin-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(0, 210, 255, 0.25);
-            border-radius: 14px;
-            padding: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
             margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .admin-card h2, .admin-card h3 {
-            color: var(--neon-blue);
-            margin-bottom: 15px;
-            font-size: 1.15rem;
+        h2 {
+            color: #38bdf8;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 22px;
         }
 
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 15px;
         }
 
-        .form-group label {
+        label {
             display: block;
             margin-bottom: 6px;
-            font-size: 0.88rem;
-            color: var(--text-muted);
+            color: #94a3b8;
+            font-size: 14px;
         }
 
-        .form-control {
+        input {
             width: 100%;
-            padding: 10px 12px;
-            background: #060a16;
+            padding: 12px;
+            background: #020617;
             border: 1px solid #1e293b;
             border-radius: 8px;
-            color: #fff;
-            font-size: 0.92rem;
-        }
-
-        .form-control:focus {
+            color: #ffffff;
+            font-size: 15px;
             outline: none;
-            border-color: var(--neon-blue);
+            transition: 0.3s;
         }
 
-        .btn-primary {
-            background: linear-gradient(90deg, var(--primary-blue), #0056b3);
-            color: #fff;
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #ffffff;
             border: none;
-            padding: 11px 18px;
             border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            font-size: 0.98rem;
+            transition: 0.3s;
+            margin-top: 5px;
         }
 
-        .qr-wrapper {
+        .btn:hover {
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+        }
+
+        .top-nav {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            background: #ffffff;
-            padding: 18px;
-            border-radius: 12px;
-            width: fit-content;
-            margin: 15px auto;
+            margin-bottom: 20px;
         }
 
-        .qr-caption {
-            color: #000;
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-top: 8px;
-        }
-
-        .leaflet-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .leaflet-item {
-            background: #060a16;
-            border: 1px solid #1e293b;
-            border-radius: 8px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .leaflet-item img {
-            width: 100%;
-            height: 110px;
-            object-fit: cover;
+        .link-btn {
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 14px;
+            border: 1px solid #0284c7;
+            padding: 6px 12px;
             border-radius: 6px;
         }
 
-        .leaflet-item p {
-            font-size: 0.8rem;
-            margin: 6px 0;
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* Leaflet List */
+        .leaflet-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #020617;
+            border: 1px solid #1e293b;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .leaflet-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .leaflet-thumb {
+            width: 55px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #38bdf8;
+        }
+
+        .leaflet-name {
+            font-weight: bold;
+            color: #e2e8f0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .delete-btn {
-            background: #ef4444;
-            color: #fff;
-            border: none;
-            padding: 5px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            background: rgba(220, 38, 38, 0.2);
+            color: #f87171;
+            border: 1px solid #dc2626;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            width: 100%;
+            transition: 0.2s;
         }
 
-        .status-msg {
-            font-size: 0.85rem;
-            color: #38bdf8;
-            margin-top: 10px;
-            text-align: center;
+        .delete-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        #dashboardSection {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Login Box -->
-        <div class="admin-card" id="loginBox">
-            <h2><i class="fas fa-lock"></i> Admin Portal Login</h2>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="adminUser" class="form-control" placeholder="admin">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="adminPass" class="form-control" placeholder="1234">
-            </div>
-            <button class="btn-primary" onclick="handleLogin()">Login</button>
+    <!-- Login Section -->
+    <div class="card" id="loginSection">
+        <h2>Admin Portal Login</h2>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Enter username (admin)">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter password (1234)">
+        </div>
+        <button class="btn" onclick="login()">Login</button>
+    </div>
+
+    <!-- Admin Dashboard Section -->
+    <div class="card" id="dashboardSection">
+        <div class="top-nav">
+            <a href="index.html" class="link-btn">&#8592; View Main Site</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
 
-        <!-- Dashboard Box -->
-        <div id="dashboardBox" style="display: none;">
-            <div class="admin-card">
-                <h3><i class="fas fa-cloud-upload-alt"></i> Upload & Publish Leaflets</h3>
-                <div class="form-group">
-                    <label>Company / Store Name</label>
-                    <input type="text" id="companyInput" class="form-control" placeholder="e.g. AdLift / Daily Mart">
-                </div>
-                <div class="form-group">
-                    <label>Select Leaflet Images</label>
-                    <input type="file" id="leafletFiles" class="form-control" accept="image/*" multiple>
-                </div>
-                <button class="btn-primary" id="uploadBtn" onclick="uploadAndSync()">Upload & Publish Live</button>
-                <div class="status-msg" id="syncStatus"></div>
-            </div>
+        <h2>Add New Advertising Leaflet</h2>
 
-            <div class="admin-card" style="text-align: center;">
-                <h3><i class="fas fa-qrcode"></i> Main Portal QR Code</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                    এই QR কোডটি প্রিন্ট করে যেখানে খুশি লাগাতে পারেন।
-                </p>
-                <div class="form-group">
-                    <input type="text" id="qrUrlInput" class="form-control" value="https://sahadhrubo63-a11y.github.io/AdLift/">
-                </div>
-                <button class="btn-primary" onclick="generateFastQR()" style="margin-bottom: 10px;">Refresh QR Code</button>
-                
-                <div class="qr-wrapper">
-                    <div id="qrcode"></div>
-                    <div class="qr-caption">SCAN FOR OFFERS</div>
-                </div>
-                <button class="btn-primary" onclick="downloadQR()" style="margin-top: 8px; background: #334155;">
-                    <i class="fas fa-download"></i> Download QR Image
-                </button>
-            </div>
-
-            <div class="admin-card">
-                <h3><i class="fas fa-images"></i> Active Live Leaflets (<span id="totalCount">0</span>)</h3>
-                <div class="leaflet-list" id="adminLeafletList"></div>
-                <button class="delete-btn" onclick="clearAllLeaflets()" style="margin-top: 15px; padding: 8px;">Delete All & Sync</button>
-            </div>
-
-            <button class="btn-primary" onclick="logoutAdmin()" style="background: #334155; margin-top: 10px;">Logout</button>
+        <div class="form-group">
+            <label>Company / Store Name</label>
+            <input type="text" id="companyInput" placeholder="e.g., Daily Mart Khulna">
         </div>
+
+        <div class="form-group">
+            <label>Facebook Image Address (Direct Link)</label>
+            <input type="url" id="imageInput" placeholder="Paste Facebook image address here...">
+            <p class="hint">* Facebook-এ ছবি বড় করে ওপেন করে Right Click -> "Copy image address" দিয়ে লিংকটি এখানে পেস্ট করুন।</p>
+        </div>
+
+        <button class="btn" onclick="addLeaflet()">+ Add Leaflet to Main Portal</button>
+
+        <hr style="border-color: #1e293b; margin: 25px 0;">
+
+        <h2>Uploaded Leaflets (<span id="count">0</span>)</h2>
+        <div id="leafletList"></div>
     </div>
 
     <script>
-        const ADMIN_CREDENTIALS = { username: "admin", password: "1234" };
-        const GITHUB_USER = "sahadhrubo63-a11y";
-        const GITHUB_REPO = "AdLift"; // যে রিপোজিটরিতে মেইন সাইট লাইভ আছে
-        const DATA_FILE = "leaflets.json";
-        const GITHUB_TOKEN = "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"; // আপনার দেওয়া টোকেন
+        // Admin Credentials
+        const ADMIN_USER = "admin";
+        const ADMIN_PASS = "1234";
 
-        let leaflets = [];
+        // Check login state
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+            showDashboard();
+        }
 
-        window.onload = async function () {
-            generateFastQR();
-            await fetchExistingLeaflets();
-        };
+        function login() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
 
-        function handleLogin() {
-            const user = document.getElementById("adminUser").value.trim();
-            const pass = document.getElementById("adminPass").value.trim();
-
-            if (user === ADMIN_CREDENTIALS.username && pass === ADMIN_CREDENTIALS.password) {
-                document.getElementById("loginBox").style.display = "none";
-                document.getElementById("dashboardBox").style.display = "block";
-                renderAdminList();
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                sessionStorage.setItem('isAdminLoggedIn', 'true');
+                showDashboard();
             } else {
-                alert("Incorrect username or password!");
+                alert("ভুল Username অথবা Password! (Default: admin / 1234)");
             }
         }
 
-        function logoutAdmin() {
-            document.getElementById("loginBox").style.display = "block";
-            document.getElementById("dashboardBox").style.display = "none";
-            document.getElementById("adminUser").value = "";
-            document.getElementById("adminPass").value = "";
+        function logout() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            location.reload();
         }
 
-        async function fetchExistingLeaflets() {
-            try {
-                const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${DATA_FILE}?t=${Date.now()}`;
-                const res = await fetch(rawUrl);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (Array.isArray(data)) {
-                        leaflets = data;
-                        renderAdminList();
-                    }
-                }
-            } catch (e) {
-                console.log("No existing leaflets found.");
-            }
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            renderList();
         }
 
-        function uploadAndSync() {
-            const company = document.getElementById("companyInput").value.trim() || "AdLift Store";
-            const files = document.getElementById("leafletFiles").files;
+        function addLeaflet() {
+            const company = document.getElementById('companyInput').value.trim();
+            const image = document.getElementById('imageInput').value.trim();
 
-            if (files.length === 0) {
-                alert("Please select at least one image.");
+            if (!company || !image) {
+                alert("অনুগ্রহ করে কোম্পানির নাম এবং ছবির লিংক দুটিই দিন!");
                 return;
             }
 
-            document.getElementById("syncStatus").innerText = "Processing & uploading to GitHub...";
-            document.getElementById("uploadBtn").disabled = true;
+            const savedData = localStorage.getItem('adLeaflets');
+            const leaflets = savedData ? JSON.parse(savedData) : [];
 
-            let processed = 0;
-            Array.from(files).forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    compressImage(e.target.result, 700, 0.72, async (compressedDataUrl) => {
-                        leaflets.push({
-                            id: Date.now() + Math.random(),
-                            company: company,
-                            image: compressedDataUrl
-                        });
-                        processed++;
-                        if (processed === files.length) {
-                            renderAdminList();
-                            await pushToGitHub(GITHUB_TOKEN);
-                            document.getElementById("uploadBtn").disabled = false;
-                            document.getElementById("leafletFiles").value = "";
-                            document.getElementById("companyInput").value = "";
-                        }
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
+            leaflets.push({ company, image });
+            localStorage.setItem('adLeaflets', JSON.stringify(leaflets));
+
+            document.getElementById('companyInput').value = '';
+            document.getElementById('imageInput').value = '';
+            renderList();
+            alert("লিফলেট সফলভাবে যুক্ত হয়েছে!");
         }
 
-        async function pushToGitHub(token) {
-            const statusEl = document.getElementById("syncStatus");
-            statusEl.innerText = "Syncing with Main Portal...";
+        function deleteLeaflet(index) {
+            if (!confirm("আপনি কি এই লিফলেটটি ডিলিট করতে চান?")) return;
 
-            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${DATA_FILE}`;
-            let sha = null;
+            const savedData = localStorage.getItem('adLeaflets');
+            const leaflets = savedData ? JSON.parse(savedData) : [];
 
-            try {
-                const getRes = await fetch(apiUrl, {
-                    headers: { "Authorization": `token ${token}` }
-                });
-                if (getRes.ok) {
-                    const fileData = await getRes.json();
-                    sha = fileData.sha;
-                }
-            } catch (e) {}
+            leaflets.splice(index, 1);
+            localStorage.setItem('adLeaflets', JSON.stringify(leaflets));
+            renderList();
+        }
 
-            const jsonString = JSON.stringify(leaflets);
-            const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
+        function renderList() {
+            const savedData = localStorage.getItem('adLeaflets');
+            const leaflets = savedData ? JSON.parse(savedData) : [];
+            const listContainer = document.getElementById('leafletList');
+            document.getElementById('count').textContent = leaflets.length;
 
-            const body = {
-                message: "Update leaflets from Admin Portal",
-                content: encodedContent
-            };
-            if (sha) body.sha = sha;
-
-            try {
-                const putRes = await fetch(apiUrl, {
-                    method: "PUT",
-                    headers: {
-                        "Authorization": `token ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                if (putRes.ok) {
-                    statusEl.innerText = "✅ Success! মেইন পোর্টালে আপডেট হয়ে গেছে।";
-                } else {
-                    const err = await putRes.json();
-                    statusEl.innerText = "❌ Error: " + (err.message || "Token error");
-                }
-            } catch (e) {
-                statusEl.innerText = "❌ Network error.";
+            if (leaflets.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; color:#64748b;">এখনো কোনো লিফলেট অ্যাড করা হয়নি।</p>';
+                return;
             }
-        }
 
-        function compressImage(base64, maxWidth, quality, callback) {
-            const img = new Image();
-            img.src = base64;
-            img.onload = function () {
-                const canvas = document.createElement("canvas");
-                let width = img.width;
-                let height = img.height;
-                if (width > maxWidth) {
-                    height = Math.round((height * maxWidth) / width);
-                    width = maxWidth;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, width, height);
-                callback(canvas.toDataURL("image/jpeg", quality));
-            };
-        }
-
-        function renderAdminList() {
-            const list = document.getElementById("adminLeafletList");
-            document.getElementById("totalCount").innerText = leaflets.length;
-            list.innerHTML = "";
-
+            listContainer.innerHTML = '';
             leaflets.forEach((item, index) => {
-                const div = document.createElement("div");
-                div.className = "leaflet-item";
+                const div = document.createElement('div');
+                div.className = 'leaflet-item';
                 div.innerHTML = `
-                    <img src="${item.image}" alt="leaflet">
-                    <p>${item.company}</p>
+                    <div class="leaflet-info">
+                        <img src="${item.image}" class="leaflet-thumb" onerror="this.src='https://via.placeholder.com/60/0f172a/38bdf8?text=Err'">
+                        <div>
+                            <div class="leaflet-name">${item.company}</div>
+                            <div style="font-size:11px; color:#64748b;">Slide #${index + 1}</div>
+                        </div>
+                    </div>
                     <button class="delete-btn" onclick="deleteLeaflet(${index})">Delete</button>
                 `;
-                list.appendChild(div);
+                listContainer.appendChild(div);
             });
-        }
-
-        async function deleteLeaflet(index) {
-            leaflets.splice(index, 1);
-            renderAdminList();
-            await pushToGitHub(GITHUB_TOKEN);
-        }
-
-        async function clearAllLeaflets() {
-            if (confirm("Delete all leaflets?")) {
-                leaflets = [];
-                renderAdminList();
-                await pushToGitHub(GITHUB_TOKEN);
-            }
-        }
-
-        function generateFastQR() {
-            const qrContainer = document.getElementById("qrcode");
-            const url = document.getElementById("qrUrlInput").value.trim();
-            qrContainer.innerHTML = "";
-
-            new QRCode(qrContainer, {
-                text: url,
-                width: 220,
-                height: 220,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.L
-            });
-        }
-
-        function downloadQR() {
-            const qrCanvas = document.querySelector("#qrcode canvas");
-            if (!qrCanvas) return;
-            const link = document.createElement("a");
-            link.download = "Main-Portal-QR.png";
-            link.href = qrCanvas.toDataURL("image/png");
-            link.click();
         }
     </script>
 </body>
