@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Leaflet Showcase</title>
+    <!-- QR Code Generator Library (Fast & Standard) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050811;
+            --card-bg: #0c1326;
+            --primary-blue: #007bff;
+            --neon-blue: #00d2ff;
+            --text-light: #f0f4f8;
+            --text-muted: #94a3b8;
+            --whatsapp-green: #25D366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #0f1c3f 0%, var(--bg-dark) 80%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Header / Top Bar */
+        header {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 210, 255, 0.15);
+        }
+
+        .brand-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            letter-spacing: 1px;
+        }
+
+        .admin-toggle-btn {
+            background: rgba(0, 123, 255, 0.15);
+            border: 1px solid var(--primary-blue);
+            color: var(--neon-blue);
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .admin-toggle-btn:hover {
+            background: var(--primary-blue);
+            color: #fff;
+        }
+
+        /* Main Viewer Container */
+        #viewerSection {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .company-header {
+            text-align: center;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        .slide-counter {
+            font-size: 0.85rem;
+            color: var(--neon-blue);
+            margin-top: 4px;
+        }
+
+        /* Slider Wrapper */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 123, 255, 0.2);
+            touch-action: pan-y;
+        }
+
+        .slides-track {
+            display: flex;
+            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            width: 100%;
+        }
+
+        .slide {
+            min-width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+        }
+
+        .slide img {
+            width: 100%;
+            max-height: 62vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Navigation Arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(5, 8, 17, 0.75);
+            color: var(--neon-blue);
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            z-index: 10;
+            transition: 0.2s;
+        }
+
+        .nav-arrow:hover {
+            background: var(--primary-blue);
+            color: #fff;
+        }
+
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
+
+        /* Dots Indicator */
+        .dots-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 14px 0;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #334155;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            background: var(--neon-blue);
+            width: 22px;
+            border-radius: 4px;
+        }
+
+        /* WhatsApp CTA Button */
+        .whatsapp-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: #fff;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+        }
+
+        .whatsapp-btn i {
+            font-size: 1.4rem;
+        }
+
+        /* Admin Section */
+        #adminSection {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 210, 255, 0.25);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .admin-card h2, .admin-card h3 {
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            background: #060a16;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-blue), #0056b3);
+            color: #fff;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* QR Code Box */
+        .qr-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 12px;
+            width: fit-content;
+            margin: 15px auto;
+        }
+
+        .qr-caption {
+            color: #000;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        /* Uploaded Leaflets List */
+        .leaflet-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .leaflet-item {
+            background: #060a16;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        .leaflet-item img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .leaflet-item p {
+            font-size: 0.8rem;
+            margin: 6px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-logo"><i class="fas fa-bolt"></i> AD-SHOWCASE</div>
+        <button class="admin-toggle-btn" id="toggleAdminBtn" onclick="toggleAdminPanel()">
+            <i class="fas fa-user-shield"></i> Admin
+        </button>
+    </header>
+
+    <!-- MAIN USER LEAFLET VIEWER -->
+    <main id="viewerSection">
+        <div class="company-header">
+            <div class="company-name" id="displayCompanyName">Welcome Offer</div>
+            <div class="slide-counter" id="slideCounter">1 / 1</div>
+        </div>
+
+        <div class="slider-container" id="sliderContainer">
+            <button class="nav-arrow prev-btn" onclick="prevSlide()"><i class="fas fa-chevron-left"></i></button>
+            <div class="slides-track" id="slidesTrack">
+                <!-- Slides will be injected here -->
+            </div>
+            <button class="nav-arrow next-btn" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div class="dots-container" id="dotsContainer"></div>
+
+        <!-- Direct WhatsApp Action Button -->
+        <a href="https://wa.me/8801407193581?text=Hello!%20I%20scanned%20your%20QR%20code%20and%20saw%20the%20leaflet." 
+           target="_blank" 
+           class="whatsapp-btn" 
+           id="whatsappLink">
+            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+        </a>
+    </main>
+
+    <!-- ADMIN PORTAL -->
+    <section id="adminSection">
+        <!-- Login Box -->
+        <div class="admin-card" id="loginBox">
+            <h2><i class="fas fa-lock"></i> Admin Login</h2>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="adminUser" class="form-control" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="adminPass" class="form-control" placeholder="Enter password">
+            </div>
+            <button class="btn-primary" onclick="handleLogin()">Login to Dashboard</button>
+        </div>
+
+        <!-- Admin Dashboard (Hidden until login) -->
+        <div id="dashboardBox" style="display: none;">
+            <!-- Upload Leaflets -->
+            <div class="admin-card">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Upload Advertising Leaflets</h3>
+                <div class="form-group">
+                    <label>Company / Store Name</label>
+                    <input type="text" id="companyInput" class="form-control" placeholder="e.g. Daily Mart / AdLift">
+                </div>
+                <div class="form-group">
+                    <label>Select Multiple Leaflet Images</label>
+                    <input type="file" id="leafletFiles" class="form-control" accept="image/*" multiple>
+                </div>
+                <button class="btn-primary" onclick="uploadLeaflets()">Save & Publish Leaflets</button>
+            </div>
+
+            <!-- Fast QR Code Generator -->
+            <div class="admin-card" style="text-align: center;">
+                <h3><i class="fas fa-qrcode"></i> Instant Scan QR Code</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                    Standard High-Contrast QR Code for Lightning-Fast Camera Scan
+                </p>
+                <div class="form-group">
+                    <input type="text" id="qrUrlInput" class="form-control" placeholder="Website URL">
+                </div>
+                <button class="btn-primary" onclick="generateFastQR()" style="margin-bottom: 10px;">Generate / Update QR</button>
+                
+                <div class="qr-wrapper" id="qrPrintArea">
+                    <div id="qrcode"></div>
+                    <div class="qr-caption">SCAN FOR OFFERS</div>
+                </div>
+                <button class="admin-toggle-btn" onclick="downloadQR()" style="margin-top: 8px;">
+                    <i class="fas fa-download"></i> Download QR Image
+                </button>
+            </div>
+
+            <!-- Manage Uploaded Leaflets -->
+            <div class="admin-card">
+                <h3><i class="fas fa-images"></i> Active Leaflets (<span id="totalCount">0</span>)</h3>
+                <div class="leaflet-list" id="adminLeafletList"></div>
+                <button class="delete-btn" onclick="clearAllLeaflets()" style="margin-top: 15px; padding: 8px;">
+                    Delete All Leaflets
+                </button>
+            </div>
+
+            <button class="admin-toggle-btn" onclick="logoutAdmin()" style="width: 100%; padding: 10px;">
+                Logout Admin
+            </button>
+        </div>
+    </section>
+
+    <script>
+        // --- CONFIGURATION ---
+        const ADMIN_CREDENTIALS = {
+            username: "admin",
+            password: "1234"
+        };
+        const WHATSAPP_NUMBER = "8801407193581";
+
+        // Default sample leaflet if none uploaded yet
+        const DEFAULT_LEAFLETS = [
+            {
+                id: 1,
+                company: "Special Promotional Offer",
+                image: "https://via.placeholder.com/600x850/0c1326/00d2ff?text=Scan+QR+Offer+Leaflet+1"
+            },
+            {
+                id: 2,
+                company: "Mega Discount Campaign",
+                image: "https://via.placeholder.com/600x850/050811/007bff?text=Swipe+Left+or+Right+Leaflet+2"
+            }
+        ];
+
+        let leaflets = JSON.parse(localStorage.getItem("ad_leaflets")) || DEFAULT_LEAFLETS;
+        let currentIndex = 0;
+        let isAdminLoggedIn = false;
+
+        // Initialize App
+        window.onload = function () {
+            renderSlider();
+            document.getElementById("qrUrlInput").value = window.location.href.split('?')[0];
+            generateFastQR();
+            setupTouchSwipe();
+        };
+
+        // --- SLIDER & VIEWER LOGIC ---
+        function renderSlider() {
+            const track = document.getElementById("slidesTrack");
+            const dotsContainer = document.getElementById("dotsContainer");
+            const companyTitle = document.getElementById("displayCompanyName");
+            const counter = document.getElementById("slideCounter");
+
+            track.innerHTML = "";
+            dotsContainer.innerHTML = "";
+
+            if (leaflets.length === 0) {
+                track.innerHTML = `<div class="slide"><div class="empty-state">No leaflets available. Login to Admin to upload.</div></div>`;
+                companyTitle.innerText = "No Active Campaign";
+                counter.innerText = "0 / 0";
+                return;
+            }
+
+            if (currentIndex >= leaflets.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = leaflets.length - 1;
+
+            leaflets.forEach((item, index) => {
+                const slideDiv = document.createElement("div");
+                slideDiv.className = "slide";
+                slideDiv.innerHTML = `<img src="${item.image}" alt="${item.company}">`;
+                track.appendChild(slideDiv);
+
+                const dot = document.createElement("div");
+                dot.className = `dot ${index === currentIndex ? "active" : ""}`;
+                dot.onclick = () => goToSlide(index);
+                dotsContainer.appendChild(dot);
+            });
+
+            updateSliderPosition();
+        }
+
+        function updateSliderPosition() {
+            const track = document.getElementById("slidesTrack");
+            const companyTitle = document.getElementById("displayCompanyName");
+            const counter = document.getElementById("slideCounter");
+            const dots = document.querySelectorAll(".dot");
+
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            
+            const currentItem = leaflets[currentIndex];
+            companyTitle.innerText = currentItem.company;
+            counter.innerText = `${currentIndex + 1} / ${leaflets.length}`;
+
+            // Update WhatsApp message dynamically with Company Name
+            const msg = encodeURIComponent(`Hello! I scanned the QR code for "${currentItem.company}" and want to know more.`);
+            document.getElementById("whatsappLink").href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle("active", idx === currentIndex);
+            });
+        }
+
+        function nextSlide() {
+            if (leaflets.length <= 1) return;
+            currentIndex = (currentIndex + 1) % leaflets.length;
+            updateSliderPosition();
+        }
+
+        function prevSlide() {
+            if (leaflets.length <= 1) return;
+            currentIndex = (currentIndex - 1 + leaflets.length) % leaflets.length;
+            updateSliderPosition();
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateSliderPosition();
+        }
+
+        // Touch Swipe Support (Left to Right & Right to Left)
+        function setupTouchSwipe() {
+            const slider = document.getElementById("sliderContainer");
+            let startX = 0;
+            let endX = 0;
+
+            slider.addEventListener("touchstart", (e) => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
+
+            slider.addEventListener("touchend", (e) => {
+                endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
+                if (Math.abs(diff) > 40) {
+                    if (diff > 0) {
+                        nextSlide(); // Swipe Left -> Next
+                    } else {
+                        prevSlide(); // Swipe Right -> Previous
+                    }
+                }
+            }, { passive: true });
+        }
+
+        // --- ADMIN PORTAL LOGIC ---
+        function toggleAdminPanel() {
+            const viewer = document.getElementById("viewerSection");
+            const admin = document.getElementById("adminSection");
+            const btn = document.getElementById("toggleAdminBtn");
+
+            if (admin.style.display === "none" || admin.style.display === "") {
+                viewer.style.display = "none";
+                admin.style.display = "block";
+                btn.innerHTML = `<i class="fas fa-eye"></i> View Site`;
+            } else {
+                admin.style.display = "none";
+                viewer.style.display = "flex";
+                btn.innerHTML = `<i class="fas fa-user-shield"></i> Admin`;
+                renderSlider();
+            }
+        }
+
+        function handleLogin() {
+            const user = document.getElementById("adminUser").value.trim();
+            const pass = document.getElementById("adminPass").value.trim();
+
+            if (user === ADMIN_CREDENTIALS.username && pass === ADMIN_CREDENTIALS.password) {
+                isAdminLoggedIn = true;
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("dashboardBox").style.display = "block";
+                renderAdminList();
+            } else {
+                alert("Invalid Username or Password!");
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById("loginBox").style.display = "block";
+            document.getElementById("dashboardBox").style.display = "none";
+            document.getElementById("adminUser").value = "";
+            document.getElementById("adminPass").value = "";
+            toggleAdminPanel();
+        }
+
+        // Multiple Image Upload with Compression for Fast Loading
+        function uploadLeaflets() {
+            const company = document.getElementById("companyInput").value.trim() || "Featured Store";
+            const files = document.getElementById("leafletFiles").files;
+
+            if (files.length === 0) {
+                alert("Please select at least one leaflet image.");
+                return;
+            }
+
+            // Clear default placeholders on first real upload
+            if (leaflets.length === 2 && leaflets[0].image.includes("via.placeholder.com")) {
+                leaflets = [];
+            }
+
+            let processed = 0;
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    compressImage(e.target.result, 900, 0.85, (compressedDataUrl) => {
+                        leaflets.push({
+                            id: Date.now() + Math.random(),
+                            company: company,
+                            image: compressedDataUrl
+                        });
+                        processed++;
+                        if (processed === files.length) {
+                            localStorage.setItem("ad_leaflets", JSON.stringify(leaflets));
+                            document.getElementById("leafletFiles").value = "";
+                            document.getElementById("companyInput").value = "";
+                            renderAdminList();
+                            alert(`${files.length} leaflet(s) uploaded successfully!`);
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Compress image so QR scan loads webpage instantly
+        function compressImage(base64, maxWidth, quality, callback) {
+            const img = new Image();
+            img.src = base64;
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL("image/jpeg", quality));
+            };
+        }
+
+        function renderAdminList() {
+            const list = document.getElementById("adminLeafletList");
+            document.getElementById("totalCount").innerText = leaflets.length;
+            list.innerHTML = "";
+
+            leaflets.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.className = "leaflet-item";
+                div.innerHTML = `
+                    <img src="${item.image}" alt="leaflet">
+                    <p>${item.company}</p>
+                    <button class="delete-btn" onclick="deleteLeaflet(${index})">Delete</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function deleteLeaflet(index) {
+            leaflets.splice(index, 1);
+            localStorage.setItem("ad_leaflets", JSON.stringify(leaflets));
+            renderAdminList();
+        }
+
+        function clearAllLeaflets() {
+            if (confirm("Are you sure you want to delete all leaflets?")) {
+                leaflets = [];
+                localStorage.setItem("ad_leaflets", JSON.stringify(leaflets));
+                renderAdminList();
+            }
+        }
+
+        // --- LIGHTNING-FAST QR CODE GENERATOR ---
+        function generateFastQR() {
+            const qrContainer = document.getElementById("qrcode");
+            const url = document.getElementById("qrUrlInput").value.trim() || window.location.href;
+            qrContainer.innerHTML = "";
+
+            // Low error correction (L) + Pure Black & White + Standard 220x220 size = Fastest Camera Detection
+            new QRCode(qrContainer, {
+                text: url,
+                width: 220,
+                height: 220,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.L
+            });
+        }
+
+        function downloadQR() {
+            const qrCanvas = document.querySelector("#qrcode canvas");
+            if (!qrCanvas) return;
+
+            const link = document.createElement("a");
+            link.download = "Fast-Scan-Leaflet-QR.png";
+            link.href = qrCanvas.toDataURL("image/png");
+            link.click();
+        }
+    </script>
+</body>
+</html>
