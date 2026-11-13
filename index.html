@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Leaflet Showcase</title>
-    <!-- QR Code Generator Library (Fast & Standard) -->
+    <!-- QR Code Generator Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -36,7 +36,6 @@
             overflow-x: hidden;
         }
 
-        /* Header / Top Bar */
         header {
             width: 100%;
             max-width: 600px;
@@ -70,7 +69,6 @@
             color: #fff;
         }
 
-        /* Main Viewer Container */
         #viewerSection {
             width: 100%;
             max-width: 500px;
@@ -101,7 +99,6 @@
             margin-top: 4px;
         }
 
-        /* Slider Wrapper */
         .slider-container {
             position: relative;
             width: 100%;
@@ -134,7 +131,6 @@
             display: block;
         }
 
-        /* Navigation Arrows */
         .nav-arrow {
             position: absolute;
             top: 50%;
@@ -162,7 +158,6 @@
         .prev-btn { left: 10px; }
         .next-btn { right: 10px; }
 
-        /* Dots Indicator */
         .dots-container {
             display: flex;
             justify-content: center;
@@ -185,7 +180,6 @@
             border-radius: 4px;
         }
 
-        /* WhatsApp CTA Button */
         .whatsapp-btn {
             width: 100%;
             background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
@@ -209,11 +203,6 @@
             box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
         }
 
-        .whatsapp-btn i {
-            font-size: 1.4rem;
-        }
-
-        /* Admin Section */
         #adminSection {
             display: none;
             width: 100%;
@@ -273,11 +262,6 @@
             font-size: 1rem;
         }
 
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        /* QR Code Box */
         .qr-wrapper {
             display: flex;
             flex-direction: column;
@@ -296,7 +280,6 @@
             margin-top: 8px;
         }
 
-        /* Uploaded Leaflets List */
         .leaflet-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -310,7 +293,6 @@
             border-radius: 8px;
             padding: 8px;
             text-align: center;
-            position: relative;
         }
 
         .leaflet-item img {
@@ -355,7 +337,6 @@
         </button>
     </header>
 
-    <!-- MAIN USER LEAFLET VIEWER -->
     <main id="viewerSection">
         <div class="company-header">
             <div class="company-name" id="displayCompanyName">Welcome Offer</div>
@@ -364,125 +345,106 @@
 
         <div class="slider-container" id="sliderContainer">
             <button class="nav-arrow prev-btn" onclick="prevSlide()"><i class="fas fa-chevron-left"></i></button>
-            <div class="slides-track" id="slidesTrack">
-                <!-- Slides will be injected here -->
-            </div>
+            <div class="slides-track" id="slidesTrack"></div>
             <button class="nav-arrow next-btn" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>
         </div>
 
         <div class="dots-container" id="dotsContainer"></div>
 
-        <!-- Direct WhatsApp Action Button -->
-        <a href="https://wa.me/8801407193581?text=Hello!%20I%20scanned%20your%20QR%20code%20and%20saw%20the%20leaflet." 
+        <a href="https://wa.me/8801407193581?text=Hello!%20I%20scanned%20your%20QR%20code." 
            target="_blank" 
            class="whatsapp-btn" 
            id="whatsappLink">
-            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+            <i class="fab fa-whatsapp"></i> Chat on WhatsApp (+8801407193581)
         </a>
     </main>
 
-    <!-- ADMIN PORTAL -->
     <section id="adminSection">
-        <!-- Login Box -->
         <div class="admin-card" id="loginBox">
             <h2><i class="fas fa-lock"></i> Admin Login</h2>
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" id="adminUser" class="form-control" placeholder="Enter username">
+                <input type="text" id="adminUser" class="form-control" placeholder="admin">
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="adminPass" class="form-control" placeholder="Enter password">
+                <input type="password" id="adminPass" class="form-control" placeholder="1234">
             </div>
-            <button class="btn-primary" onclick="handleLogin()">Login to Dashboard</button>
+            <button class="btn-primary" onclick="handleLogin()">Login</button>
         </div>
 
-        <!-- Admin Dashboard (Hidden until login) -->
         <div id="dashboardBox" style="display: none;">
-            <!-- Upload Leaflets -->
             <div class="admin-card">
-                <h3><i class="fas fa-cloud-upload-alt"></i> Upload Advertising Leaflets</h3>
+                <h3><i class="fas fa-cloud-upload-alt"></i> Upload Leaflets</h3>
                 <div class="form-group">
                     <label>Company / Store Name</label>
                     <input type="text" id="companyInput" class="form-control" placeholder="e.g. Daily Mart / AdLift">
                 </div>
                 <div class="form-group">
-                    <label>Select Multiple Leaflet Images</label>
+                    <label>Select Leaflet Images</label>
                     <input type="file" id="leafletFiles" class="form-control" accept="image/*" multiple>
                 </div>
-                <button class="btn-primary" onclick="uploadLeaflets()">Save & Publish Leaflets</button>
+                <button class="btn-primary" onclick="uploadLeaflets()">Save & Publish</button>
             </div>
 
-            <!-- Fast QR Code Generator -->
             <div class="admin-card" style="text-align: center;">
                 <h3><i class="fas fa-qrcode"></i> Instant Scan QR Code</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                    Standard High-Contrast QR Code for Lightning-Fast Camera Scan
+                    Scanning this opens your live website instantly.
                 </p>
                 <div class="form-group">
-                    <input type="text" id="qrUrlInput" class="form-control" placeholder="Website URL">
+                    <input type="text" id="qrUrlInput" class="form-control" placeholder="Live Website URL">
                 </div>
-                <button class="btn-primary" onclick="generateFastQR()" style="margin-bottom: 10px;">Generate / Update QR</button>
+                <button class="btn-primary" onclick="generateFastQR()" style="margin-bottom: 10px;">Refresh QR Code</button>
                 
-                <div class="qr-wrapper" id="qrPrintArea">
+                <div class="qr-wrapper">
                     <div id="qrcode"></div>
                     <div class="qr-caption">SCAN FOR OFFERS</div>
                 </div>
                 <button class="admin-toggle-btn" onclick="downloadQR()" style="margin-top: 8px;">
-                    <i class="fas fa-download"></i> Download QR Image
+                    <i class="fas fa-download"></i> Download QR
                 </button>
             </div>
 
-            <!-- Manage Uploaded Leaflets -->
             <div class="admin-card">
                 <h3><i class="fas fa-images"></i> Active Leaflets (<span id="totalCount">0</span>)</h3>
                 <div class="leaflet-list" id="adminLeafletList"></div>
-                <button class="delete-btn" onclick="clearAllLeaflets()" style="margin-top: 15px; padding: 8px;">
-                    Delete All Leaflets
-                </button>
+                <button class="delete-btn" onclick="clearAllLeaflets()" style="margin-top: 15px; padding: 8px;">Delete All</button>
             </div>
 
-            <button class="admin-toggle-btn" onclick="logoutAdmin()" style="width: 100%; padding: 10px;">
-                Logout Admin
-            </button>
+            <button class="admin-toggle-btn" onclick="logoutAdmin()" style="width: 100%; padding: 10px;">Logout</button>
         </div>
     </section>
 
     <script>
-        // --- CONFIGURATION ---
-        const ADMIN_CREDENTIALS = {
-            username: "admin",
-            password: "1234"
-        };
+        const ADMIN_CREDENTIALS = { username: "admin", password: "1234" };
         const WHATSAPP_NUMBER = "8801407193581";
 
-        // Default sample leaflet if none uploaded yet
         const DEFAULT_LEAFLETS = [
             {
                 id: 1,
-                company: "Special Promotional Offer",
-                image: "https://via.placeholder.com/600x850/0c1326/00d2ff?text=Scan+QR+Offer+Leaflet+1"
+                company: "Welcome Offer - AdLift",
+                image: "https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=600&q=80"
             },
             {
                 id: 2,
-                company: "Mega Discount Campaign",
-                image: "https://via.placeholder.com/600x850/050811/007bff?text=Swipe+Left+or+Right+Leaflet+2"
+                company: "Daily Mart Promotion",
+                image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=600&q=80"
             }
         ];
 
         let leaflets = JSON.parse(localStorage.getItem("ad_leaflets")) || DEFAULT_LEAFLETS;
         let currentIndex = 0;
-        let isAdminLoggedIn = false;
 
-        // Initialize App
         window.onload = function () {
             renderSlider();
-            document.getElementById("qrUrlInput").value = window.location.href.split('?')[0];
+            // Automatically detect clean URL without parameters for QR
+            const cleanURL = window.location.href.split('?')[0].split('#')[0];
+            document.getElementById("qrUrlInput").value = cleanURL;
             generateFastQR();
             setupTouchSwipe();
         };
 
-        // --- SLIDER & VIEWER LOGIC ---
         function renderSlider() {
             const track = document.getElementById("slidesTrack");
             const dotsContainer = document.getElementById("dotsContainer");
@@ -493,8 +455,8 @@
             dotsContainer.innerHTML = "";
 
             if (leaflets.length === 0) {
-                track.innerHTML = `<div class="slide"><div class="empty-state">No leaflets available. Login to Admin to upload.</div></div>`;
-                companyTitle.innerText = "No Active Campaign";
+                track.innerHTML = `<div class="slide"><div class="empty-state">No leaflets available.</div></div>`;
+                companyTitle.innerText = "No Campaign";
                 counter.innerText = "0 / 0";
                 return;
             }
@@ -529,8 +491,7 @@
             companyTitle.innerText = currentItem.company;
             counter.innerText = `${currentIndex + 1} / ${leaflets.length}`;
 
-            // Update WhatsApp message dynamically with Company Name
-            const msg = encodeURIComponent(`Hello! I scanned the QR code for "${currentItem.company}" and want to know more.`);
+            const msg = encodeURIComponent(`Hello! I scanned the QR code for "${currentItem.company}" and want to order/know more.`);
             document.getElementById("whatsappLink").href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
 
             dots.forEach((dot, idx) => {
@@ -555,7 +516,6 @@
             updateSliderPosition();
         }
 
-        // Touch Swipe Support (Left to Right & Right to Left)
         function setupTouchSwipe() {
             const slider = document.getElementById("sliderContainer");
             let startX = 0;
@@ -569,16 +529,12 @@
                 endX = e.changedTouches[0].clientX;
                 const diff = startX - endX;
                 if (Math.abs(diff) > 40) {
-                    if (diff > 0) {
-                        nextSlide(); // Swipe Left -> Next
-                    } else {
-                        prevSlide(); // Swipe Right -> Previous
-                    }
+                    if (diff > 0) nextSlide();
+                    else prevSlide();
                 }
             }, { passive: true });
         }
 
-        // --- ADMIN PORTAL LOGIC ---
         function toggleAdminPanel() {
             const viewer = document.getElementById("viewerSection");
             const admin = document.getElementById("adminSection");
@@ -601,17 +557,15 @@
             const pass = document.getElementById("adminPass").value.trim();
 
             if (user === ADMIN_CREDENTIALS.username && pass === ADMIN_CREDENTIALS.password) {
-                isAdminLoggedIn = true;
                 document.getElementById("loginBox").style.display = "none";
                 document.getElementById("dashboardBox").style.display = "block";
                 renderAdminList();
             } else {
-                alert("Invalid Username or Password!");
+                alert("Incorrect username or password!");
             }
         }
 
         function logoutAdmin() {
-            isAdminLoggedIn = false;
             document.getElementById("loginBox").style.display = "block";
             document.getElementById("dashboardBox").style.display = "none";
             document.getElementById("adminUser").value = "";
@@ -619,18 +573,16 @@
             toggleAdminPanel();
         }
 
-        // Multiple Image Upload with Compression for Fast Loading
         function uploadLeaflets() {
             const company = document.getElementById("companyInput").value.trim() || "Featured Store";
             const files = document.getElementById("leafletFiles").files;
 
             if (files.length === 0) {
-                alert("Please select at least one leaflet image.");
+                alert("Please select images.");
                 return;
             }
 
-            // Clear default placeholders on first real upload
-            if (leaflets.length === 2 && leaflets[0].image.includes("via.placeholder.com")) {
+            if (leaflets.length === 2 && leaflets[0].company.includes("Welcome Offer")) {
                 leaflets = [];
             }
 
@@ -638,7 +590,7 @@
             Array.from(files).forEach((file) => {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    compressImage(e.target.result, 900, 0.85, (compressedDataUrl) => {
+                    compressImage(e.target.result, 800, 0.8, (compressedDataUrl) => {
                         leaflets.push({
                             id: Date.now() + Math.random(),
                             company: company,
@@ -650,7 +602,7 @@
                             document.getElementById("leafletFiles").value = "";
                             document.getElementById("companyInput").value = "";
                             renderAdminList();
-                            alert(`${files.length} leaflet(s) uploaded successfully!`);
+                            alert("Leaflets uploaded successfully!");
                         }
                     });
                 };
@@ -658,7 +610,6 @@
             });
         }
 
-        // Compress image so QR scan loads webpage instantly
         function compressImage(base64, maxWidth, quality, callback) {
             const img = new Image();
             img.src = base64;
@@ -666,12 +617,10 @@
                 const canvas = document.createElement("canvas");
                 let width = img.width;
                 let height = img.height;
-
                 if (width > maxWidth) {
                     height = Math.round((height * maxWidth) / width);
                     width = maxWidth;
                 }
-
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext("2d");
@@ -704,20 +653,18 @@
         }
 
         function clearAllLeaflets() {
-            if (confirm("Are you sure you want to delete all leaflets?")) {
+            if (confirm("Delete all leaflets?")) {
                 leaflets = [];
                 localStorage.setItem("ad_leaflets", JSON.stringify(leaflets));
                 renderAdminList();
             }
         }
 
-        // --- LIGHTNING-FAST QR CODE GENERATOR ---
         function generateFastQR() {
             const qrContainer = document.getElementById("qrcode");
             const url = document.getElementById("qrUrlInput").value.trim() || window.location.href;
             qrContainer.innerHTML = "";
 
-            // Low error correction (L) + Pure Black & White + Standard 220x220 size = Fastest Camera Detection
             new QRCode(qrContainer, {
                 text: url,
                 width: 220,
@@ -731,9 +678,8 @@
         function downloadQR() {
             const qrCanvas = document.querySelector("#qrcode canvas");
             if (!qrCanvas) return;
-
             const link = document.createElement("a");
-            link.download = "Fast-Scan-Leaflet-QR.png";
+            link.download = "Fast-Scan-QR.png";
             link.href = qrCanvas.toDataURL("image/png");
             link.click();
         }
