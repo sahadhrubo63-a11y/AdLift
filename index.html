@@ -321,6 +321,13 @@
             width: 100%;
         }
 
+        .status-msg {
+            font-size: 0.85rem;
+            color: #38bdf8;
+            margin-top: 10px;
+            text-align: center;
+        }
+
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -340,8 +347,8 @@
     <!-- MAIN VIEWER -->
     <main id="viewerSection">
         <div class="company-header">
-            <div class="company-name" id="displayCompanyName">AdLift Campaign</div>
-            <div class="slide-counter" id="slideCounter">1 / 1</div>
+            <div class="company-name" id="displayCompanyName">Loading Leaflets...</div>
+            <div class="slide-counter" id="slideCounter">0 / 0</div>
         </div>
 
         <div class="slider-container" id="sliderContainer">
@@ -376,8 +383,9 @@
         </div>
 
         <div id="dashboardBox" style="display: none;">
+            <!-- Upload Leaflets -->
             <div class="admin-card">
-                <h3><i class="fas fa-cloud-upload-alt"></i> Upload Leaflets</h3>
+                <h3><i class="fas fa-cloud-upload-alt"></i> Upload & Publish Leaflets</h3>
                 <div class="form-group">
                     <label>Company / Store Name</label>
                     <input type="text" id="companyInput" class="form-control" placeholder="e.g. AdLift / Daily Mart">
@@ -386,9 +394,11 @@
                     <label>Select Leaflet Images</label>
                     <input type="file" id="leafletFiles" class="form-control" accept="image/*" multiple>
                 </div>
-                <button class="btn-primary" onclick="uploadLeaflets()">Upload & Publish</button>
+                <button class="btn-primary" id="uploadBtn" onclick="uploadAndSync()">Upload & Publish to All Phones</button>
+                <div class="status-msg" id="syncStatus"></div>
             </div>
 
+            <!-- Fast QR Code -->
             <div class="admin-card" style="text-align: center;">
                 <h3><i class="fas fa-qrcode"></i> Instant Scan QR Code</h3>
                 <div class="form-group">
@@ -405,10 +415,11 @@
                 </button>
             </div>
 
+            <!-- Manage Active Leaflets -->
             <div class="admin-card">
-                <h3><i class="fas fa-images"></i> Active Leaflets (<span id="totalCount">0</span>)</h3>
+                <h3><i class="fas fa-images"></i> Live Leaflets (<span id="totalCount">0</span>)</h3>
                 <div class="leaflet-list" id="adminLeafletList"></div>
-                <button class="delete-btn" onclick="clearAllLeaflets()" style="margin-top: 15px; padding: 8px;">Delete All</button>
+                <button class="delete-btn" onclick="clearAllLeaflets()" style="margin-top: 15px; padding: 8px;">Delete All & Sync</button>
             </div>
 
             <button class="admin-toggle-btn" onclick="logoutAdmin()" style="width: 100%; padding: 10px;">Logout</button>
@@ -418,24 +429,43 @@
     <script>
         const ADMIN_CREDENTIALS = { username: "admin", password: "1234" };
         const WHATSAPP_NUMBER = "8801407193581";
+        const GITHUB_USER = "sahadhrubo63-a11y";
+        const GITHUB_REPO = "AdLift";
+        const DATA_FILE = "leaflets.json";
+        
+        // Hardcoded GitHub Token provided by user for seamless auto-sync
+        const GITHUB_TOKEN = "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";
 
-        const DEFAULT_LEAFLETS = [
-            {
-                id: 1,
-                company: "AdLift - Digital Marketing & Design",
-                image: "https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=600&q=80"
-            }
-        ];
-
-        let leaflets = JSON.parse(localStorage.getItem("adlift_leaflets")) || DEFAULT_LEAFLETS;
+        let leaflets = [];
         let currentIndex = 0;
 
-        window.onload = function () {
-            renderSlider();
-            document.getElementById("qrUrlInput").value = "https://sahadhrubo63-a11y.github.io/AdLift/";
+        window.onload = async function () {
+            document.getElementById("qrUrlInput").value = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/`;
             generateFastQR();
             setupTouchSwipe();
+            await fetchGlobalLeaflets();
         };
+
+        async function fetchGlobalLeaflets() {
+            try {
+                const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${DATA_FILE}?t=${Date.now()}`;
+                const res = await fetch(rawUrl);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        leaflets = data;
+                        localStorage.setItem("adlift_leaflets", JSON.stringify(leaflets));
+                        renderSlider();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.log("Fetching fallback...");
+            }
+
+            leaflets = JSON.parse(localStorage.getItem("adlift_leaflets")) || [];
+            renderSlider();
+        }
 
         function renderSlider() {
             const track = document.getElementById("slidesTrack");
@@ -447,8 +477,8 @@
             dotsContainer.innerHTML = "";
 
             if (leaflets.length === 0) {
-                track.innerHTML = `<div class="slide"><div class="empty-state">No leaflets available. Please login to Admin.</div></div>`;
-                companyTitle.innerText = "No Campaign";
+                track.innerHTML = `<div class="slide"><div class="empty-state">No leaflets published yet.</div></div>`;
+                companyTitle.innerText = "AdLift Offer";
                 counter.innerText = "0 / 0";
                 return;
             }
@@ -565,25 +595,23 @@
             toggleAdminPanel();
         }
 
-        function uploadLeaflets() {
+        function uploadAndSync() {
             const company = document.getElementById("companyInput").value.trim() || "AdLift Store";
             const files = document.getElementById("leafletFiles").files;
 
             if (files.length === 0) {
-                alert("Please select images.");
+                alert("Please select at least one image.");
                 return;
             }
 
-            if (leaflets.length === 1 && leaflets[0].company.includes("AdLift - Digital Marketing")) {
-                leaflets = [];
-            }
+            document.getElementById("syncStatus").innerText = "Processing & uploading images...";
+            document.getElementById("uploadBtn").disabled = true;
 
             let processed = 0;
-            Array.from(files).files = files;
             Array.from(files).forEach((file) => {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    compressImage(e.target.result, 800, 0.8, (compressedDataUrl) => {
+                    compressImage(e.target.result, 700, 0.72, async (compressedDataUrl) => {
                         leaflets.push({
                             id: Date.now() + Math.random(),
                             company: company,
@@ -596,12 +624,60 @@
                             document.getElementById("companyInput").value = "";
                             renderAdminList();
                             renderSlider();
-                            alert("Leaflets uploaded successfully! Check Main View.");
+                            await pushToGitHub(GITHUB_TOKEN);
+                            document.getElementById("uploadBtn").disabled = false;
                         }
                     });
                 };
                 reader.readAsDataURL(file);
             });
+        }
+
+        async function pushToGitHub(token) {
+            const statusEl = document.getElementById("syncStatus");
+            statusEl.innerText = "Saving to GitHub cloud so all phones can see...";
+
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${DATA_FILE}`;
+            let sha = null;
+
+            try {
+                const getRes = await fetch(apiUrl, {
+                    headers: { "Authorization": `token ${token}` }
+                });
+                if (getRes.ok) {
+                    const fileData = await getRes.json();
+                    sha = fileData.sha;
+                }
+            } catch (e) {}
+
+            const jsonString = JSON.stringify(leaflets);
+            const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
+
+            const body = {
+                message: "Sync live leaflets",
+                content: encodedContent
+            };
+            if (sha) body.sha = sha;
+
+            try {
+                const putRes = await fetch(apiUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (putRes.ok) {
+                    statusEl.innerText = "✅ Done! এখন যেকোনো ফোন থেকে QR স্ক্যান করলে এই ছবিগুলো দেখা যাবে।";
+                } else {
+                    const err = await putRes.json();
+                    statusEl.innerText = "❌ Error: " + (err.message || "Invalid GitHub Token");
+                }
+            } catch (e) {
+                statusEl.innerText = "❌ Network error.";
+            }
         }
 
         function compressImage(base64, maxWidth, quality, callback) {
@@ -640,19 +716,21 @@
             });
         }
 
-        function deleteLeaflet(index) {
+        async function deleteLeaflet(index) {
             leaflets.splice(index, 1);
             localStorage.setItem("adlift_leaflets", JSON.stringify(leaflets));
             renderAdminList();
             renderSlider();
+            await pushToGitHub(GITHUB_TOKEN);
         }
 
-        function clearAllLeaflets() {
+        async function clearAllLeaflets() {
             if (confirm("Delete all leaflets?")) {
                 leaflets = [];
                 localStorage.setItem("adlift_leaflets", JSON.stringify(leaflets));
                 renderAdminList();
                 renderSlider();
+                await pushToGitHub(GITHUB_TOKEN);
             }
         }
 
